@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор Приглашений</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            min-height: 700px;
+        }
+
+        .templates-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #e9ecef;
+            overflow-y: auto;
+        }
+
+        .templates-panel h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.2em;
+        }
+
+        .template-item {
+            width: 100%;
+            height: 160px;
+            margin-bottom: 15px;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .template-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .template-item:hover::after {
+            opacity: 1;
+        }
+
+        .template-item:hover {
+            border-color: #4ecdc4;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .template-item.active {
+            border-color: #ff6b6b;
+            transform: scale(1.02);
+        }
+
+        .template-name {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .template-item:hover .template-name {
+            opacity: 1;
+        }
+
+        .canvas-area {
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        #canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            max-height: 600px;
+            cursor: grab;
+        }
+
+        #canvas:active {
+            cursor: grabbing;
+        }
+
+        .controls-panel {
+            background: white;
+            padding: 30px;
+            border-left: 1px solid #e9ecef;
+            overflow-y: auto;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .control-group input, .control-group textarea, .control-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .control-group input:focus, .control-group textarea:focus, .control-group select:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+
+        .control-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .color-input {
+            height: 45px;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .range-input {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+            outline: none;
+        }
+
+        .range-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+        }
+
+        .text-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .text-style-btn {
+            padding: 8px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .text-style-btn.active {
+            border-color: #4ecdc4;
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .download-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .download-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+
+        .download-btn.primary {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+        }
+
+        .download-btn.secondary {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .upload-area {
+            border: 2px dashed #4ecdc4;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            background-color: rgba(78, 205, 196, 0.1);
+        }
+
+        .upload-area.dragover {
+            background-color: rgba(78, 205, 196, 0.2);
+            border-color: #ff6b6b;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+            
+            .templates-panel {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+                max-height: 200px;
+            }
+            
+            .controls-panel {
+                border-left: none;
+                border-top: 1px solid #e9ecef;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ Конструктор Приглашений</h1>
+            <p>Создавайте красивые приглашения на основе готовых фотографий</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="templates-panel">
+                <h3>🎨 Шаблоны</h3>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div>📸 Загрузить свою фотографию</div>
+                    <small>JPG, PNG до 5MB</small>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="template-item active" data-template="wedding" 
+                     style="background-image: url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=600&fit=crop')">
+                    <div class="template-name">Свадьба</div>
+                </div>
+                
+                <div class="template-item" data-template="birthday" 
+                     style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=600&fit=crop')">
+                    <div class="template-name">День рождения</div>
+                </div>
+                
+                <div class="template-item" data-template="party" 
+                     style="background-image: url('https://images.unsplash.com/photo-1464207687429-7505649dae38?w=400&h=600&fit=crop')">
+                    <div class="template-name">Вечеринка</div>
+                </div>
+                
+                <div class="template-item" data-template="graduation" 
+                     style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=600&fit=crop')">
+                    <div class="template-name">Выпускной</div>
+                </div>
+                
+                <div class="template-item" data-template="christmas" 
+                     style="background-image: url('https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400&h=600&fit=crop')">
+                    <div class="template-name">Новый год</div>
+                </div>
+                
+                <div class="template-item" data-template="business" 
+                     style="background-image: url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&h=600&fit=crop')">
+                    <div class="template-name">Деловое</div>
+                </div>
+                
+                <div class="template-item" data-template="elegant" 
+                     style="background-image: url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=600&fit=crop')">
+                    <div class="template-name">Элегантное</div>
+                </div>
+            </div>
+            
+            <div class="canvas-area">
+                <div class="canvas-container">
+                    <canvas id="canvas" width="400" height="600"></canvas>
+                </div>
+            </div>
+            
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label>📝 Основной текст</label>
+                    <textarea id="mainText" placeholder="Введите текст приглашения...">Приглашаем Вас на торжество!</textarea>
+                </div>
+                
+                <div class="control-group">
+                    <label>📅 Дата и время</label>
+                    <input type="text" id="dateText" placeholder="25 декабря 2024, 18:00" value="25 декабря 2024, 18:00">
+                </div>
+                
+                <div class="control-group">
+                    <label>📍 Место проведения</label>
+                    <input type="text" id="locationText" placeholder="Название места" value="Ресторан 'Звездный'">
+                </div>
+                
+                <div class="control-group">
+                    <label>🎨 Цвет текста</label>
+                    <input type="color" id="textColor" value="#ffffff" class="color-input">
+                </div>
+                
+                <div class="control-group">
+                    <label>📏 Размер шрифта</label>
+                    <input type="range" id="fontSize" min="16" max="48" value="24" class="range-input">
+                    <small id="fontSizeValue">24px</small>
+                </div>
+                
+                <div class="control-group">
+                    <label>🔤 Шрифт</label>
+                    <select id="fontFamily">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="Impact, sans-serif">Impact</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>✨ Стиль текста</label>
+                    <div class="text-controls">
+                        <button class="text-style-btn" id="boldBtn">B</button>
+                        <button class="text-style-btn" id="italicBtn" style="font-style: italic;">I</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>📍 Позиция текста</label>
+                    <div class="text-controls">
+                        <button class="text-style-btn" id="resetPosBtn">↺ Сброс</button>
+                        <button class="text-style-btn" id="centerBtn">⊞ Центр</button>
+                    </div>
+                    <small>💡 Перетащите текст мышкой прямо на изображении</small>
+                </div>
+                
+                <div class="control-group">
+                    <label>🌫️ Затемнение фона</label>
+                    <input type="range" id="overlayOpacity" min="0" max="80" value="30" class="range-input">
+                    <small id="overlayValue">30%</small>
+                </div>
+                
+                <div class="download-buttons">
+                    <button class="download-btn primary" onclick="downloadImage('png')">PNG</button>
+                    <button class="download-btn primary" onclick="downloadImage('jpg')">JPG</button>
+                    <button class="download-btn secondary" onclick="downloadPDF()">PDF</button>
+                    <button class="download-btn secondary" onclick="saveProject()">СОХРАНИТЬ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let currentTemplate = 'wedding';
+        let currentBackgroundImage = null;
+        let customImage = null;
+        let isBold = false;
+        let isItalic = false;
+        
+        // Позиции текстовых блоков
+        let textPositions = {
+            mainText: { x: 200, y: 200 },
+            dateText: { x: 200, y: 350 },
+            locationText: { x: 200, y: 450 }
+        };
+        
+        let isDragging = false;
+        let dragTarget = null;
+        let lastMousePos = { x: 0, y: 0 };
+        
+        const templateImages = {
+            wedding: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=600&fit=crop',
+            birthday: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=600&fit=crop',
+            party: 'https://images.unsplash.com/photo-1464207687429-7505649dae38?w=400&h=600&fit=crop',
+            graduation: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=600&fit=crop',
+            christmas: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400&h=600&fit=crop',
+            business: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&h=600&fit=crop',
+            elegant: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=600&fit=crop'
+        };
+        
+        function loadBackgroundImage(imageSrc, callback) {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                currentBackgroundImage = img;
+                if (callback) callback();
+            };
+            img.onerror = function() {
+                console.error('Ошибка загрузки изображения:', imageSrc);
+                // Создаем градиентный фон как резерв
+                currentBackgroundImage = null;
+                if (callback) callback();
+            };
+            img.src = imageSrc;
+        }
+        
+        function drawBackground() {
+            if (currentBackgroundImage) {
+                // Рисуем изображение с правильным соотношением сторон
+                const imgAspect = currentBackgroundImage.width / currentBackgroundImage.height;
+                const canvasAspect = canvas.width / canvas.height;
+                
+                let drawWidth, drawHeight, offsetX, offsetY;
+                
+                if (imgAspect > canvasAspect) {
+                    drawHeight = canvas.height;
+                    drawWidth = drawHeight * imgAspect;
+                    offsetX = (canvas.width - drawWidth) / 2;
+                    offsetY = 0;
+                } else {
+                    drawWidth = canvas.width;
+                    drawHeight = drawWidth / imgAspect;
+                    offsetX = 0;
+                    offsetY = (canvas.height - drawHeight) / 2;
+                }
+                
+                ctx.drawImage(currentBackgroundImage, offsetX, offsetY, drawWidth, drawHeight);
+            } else {
+                // Градиентный фон как резерв
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, '#ff9a9e');
+                gradient.addColorStop(1, '#fad0c4');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // Затемняющий слой
+            const overlayOpacity = document.getElementById('overlayOpacity').value / 100;
+            ctx.fillStyle = `rgba(0, 0, 0, ${overlayOpacity})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        function wrapText(text, x, y, maxWidth, lineHeight, getId = null) {
+            if (!text.trim()) return y;
+            
+            const words = text.split(' ');
+            let line = '';
+            const lines = [];
+            let currentY = y;
+            
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+                
+                if (testWidth > maxWidth && n > 0) {
+                    lines.push({text: line.trim(), y: currentY});
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            lines.push({text: line.trim(), y: currentY});
+            
+            // Рисуем текст и сохраняем области для клика
+            const totalHeight = lines.length * lineHeight;
+            const startY = y - totalHeight / 2;
+            
+            if (getId) {
+                // Сохраняем область для детекции клика
+                const textBounds = {
+                    x: x - maxWidth/2,
+                    y: startY - lineHeight/2,
+                    width: maxWidth,
+                    height: totalHeight + lineHeight,
+                    id: getId
+                };
+                
+                // Подсветка при наведении
+                if (dragTarget === getId) {
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.fillRect(textBounds.x, textBounds.y, textBounds.width, textBounds.height);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(textBounds.x, textBounds.y, textBounds.width, textBounds.height);
+                    ctx.restore();
+                }
+                
+                canvas.textBounds = canvas.textBounds || [];
+                canvas.textBounds.push(textBounds);
+            }
+            
+            lines.forEach((lineObj, index) => {
+                ctx.fillText(lineObj.text, x, startY + (index * lineHeight));
+            });
+            
+            return currentY + lineHeight;
+        }
+        
+        function updateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.textBounds = []; // Очищаем области текста
+            
+            // Фон
+            drawBackground();
+            
+            // Текст
+            const mainText = document.getElementById('mainText').value;
+            const dateText = document.getElementById('dateText').value;
+            const locationText = document.getElementById('locationText').value;
+            const textColor = document.getElementById('textColor').value;
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const fontFamily = document.getElementById('fontFamily').value;
+            
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Настройка стиля шрифта
+            let fontStyle = '';
+            if (isItalic) fontStyle += 'italic ';
+            if (isBold) fontStyle += 'bold ';
+            
+            // Основной текст
+            ctx.font = `${fontStyle}${fontSize}px ${fontFamily}`;
+            wrapText(mainText, textPositions.mainText.x, textPositions.mainText.y, canvas.width - 60, fontSize + 10, 'mainText');
+            
+            // Дата
+            ctx.font = `${fontStyle}${fontSize * 0.7}px ${fontFamily}`;
+            wrapText(dateText, textPositions.dateText.x, textPositions.dateText.y, canvas.width - 60, (fontSize * 0.7) + 8, 'dateText');
+            
+            // Место
+            ctx.font = `${fontStyle}${fontSize * 0.6}px ${fontFamily}`;
+            wrapText(locationText, textPositions.locationText.x, textPositions.locationText.y, canvas.width - 60, (fontSize * 0.6) + 6, 'locationText');
+        }
+        
+        // Функции для работы с перетаскиванием
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            return {
+                x: (e.clientX - rect.left) * scaleX,
+                y: (e.clientY - rect.top) * scaleY
+            };
+        }
+        
+        function getTextAtPosition(x, y) {
+            if (!canvas.textBounds) return null;
+            
+            for (let bound of canvas.textBounds) {
+                if (x >= bound.x && x <= bound.x + bound.width &&
+                    y >= bound.y && y <= bound.y + bound.height) {
+                    return bound.id;
+                }
+            }
+            return null;
+        }
+        
+        // События мыши для перетаскивания
+        canvas.addEventListener('mousedown', function(e) {
+            const mousePos = getMousePos(e);
+            const textId = getTextAtPosition(mousePos.x, mousePos.y);
+            
+            if (textId) {
+                isDragging = true;
+                dragTarget = textId;
+                lastMousePos = mousePos;
+                canvas.style.cursor = 'grabbing';
+                e.preventDefault();
+            }
+        });
+        
+        canvas.addEventListener('mousemove', function(e) {
+            const mousePos = getMousePos(e);
+            
+            if (isDragging && dragTarget) {
+                const deltaX = mousePos.x - lastMousePos.x;
+                const deltaY = mousePos.y - lastMousePos.y;
+                
+                textPositions[dragTarget].x += deltaX;
+                textPositions[dragTarget].y += deltaY;
+                
+                // Ограничиваем позицию в пределах canvas
+                textPositions[dragTarget].x = Math.max(30, Math.min(canvas.width - 30, textPositions[dragTarget].x));
+                textPositions[dragTarget].y = Math.max(30, Math.min(canvas.height - 30, textPositions[dragTarget].y));
+                
+                lastMousePos = mousePos;
+                updateCanvas();
+            } else {
+                // Проверяем, находится ли курсор над текстом
+                const textId = getTextAtPosition(mousePos.x, mousePos.y);
+                if (textId) {
+                    canvas.style.cursor = 'grab';
+                    if (dragTarget !== textId) {
+                        dragTarget = textId;
+                        updateCanvas();
+                    }
+                } else {
+                    canvas.style.cursor = 'default';
+                    if (dragTarget) {
+                        dragTarget = null;
+                        updateCanvas();
+                    }
+                }
+            }
+        });
+        
+        canvas.addEventListener('mouseup', function() {
+            isDragging = false;
+            canvas.style.cursor = dragTarget ? 'grab' : 'default';
+        });
+        
+        canvas.addEventListener('mouseleave', function() {
+            isDragging = false;
+            dragTarget = null;
+            canvas.style.cursor = 'default';
+            updateCanvas();
+        });
+        // Обработчики событий для шаблонов
+        document.querySelectorAll('.template-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (this.dataset.template) {
+                    document.querySelector('.template-item.active').classList.remove('active');
+                    this.classList.add('active');
+                    currentTemplate = this.dataset.template;
+                    customImage = null;
+                    // Сброс позиций при смене шаблона
+                    resetTextPositions();
+                    loadBackgroundImage(templateImages[currentTemplate], updateCanvas);
+                }
+            });
+        });
+        
+        // Загрузка пользовательского изображения
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+        
+        function handleFileUpload(file) {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.querySelector('.template-item.active').classList.remove('active');
+                    customImage = e.target.result;
+                    loadBackgroundImage(customImage, updateCanvas);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Обработчики контролов
+        document.getElementById('mainText').addEventListener('input', updateCanvas);
+        document.getElementById('dateText').addEventListener('input', updateCanvas);
+        document.getElementById('locationText').addEventListener('input', updateCanvas);
+        document.getElementById('textColor').addEventListener('change', updateCanvas);
+        document.getElementById('fontFamily').addEventListener('change', updateCanvas);
+        
+        document.getElementById('fontSize').addEventListener('input', function() {
+            document.getElementById('fontSizeValue').textContent = this.value + 'px';
+            updateCanvas();
+        });
+        
+        document.getElementById('overlayOpacity').addEventListener('input', function() {
+            document.getElementById('overlayValue').textContent = this.value + '%';
+            updateCanvas();
+        });
+        
+        // Стили текста
+        document.getElementById('boldBtn').addEventListener('click', function() {
+            isBold = !isBold;
+            this.classList.toggle('active', isBold);
+            updateCanvas();
+        });
+        
+        document.getElementById('italicBtn').addEventListener('click', function() {
+            isItalic = !isItalic;
+            this.classList.toggle('active', isItalic);
+            updateCanvas();
+        });
+        
+        // Кнопки управления позицией
+        document.getElementById('resetPosBtn').addEventListener('click', function() {
+            resetTextPositions();
+            updateCanvas();
+        });
+        
+        document.getElementById('centerBtn').addEventListener('click', function() {
+            centerTextPositions();
+            updateCanvas();
+        });
+        
+        function resetTextPositions() {
+            textPositions = {
+                mainText: { x: canvas.width / 2, y: canvas.height / 2 - 80 },
+                dateText: { x: canvas.width / 2, y: canvas.height / 2 + 20 },
+                locationText: { x: canvas.width / 2, y: canvas.height / 2 + 60 }
+            };
+        }
+        
+        function centerTextPositions() {
+            textPositions.mainText.x = canvas.width / 2;
+            textPositions.dateText.x = canvas.width / 2;
+            textPositions.locationText.x = canvas.width / 2;
+        }
+        
+        function downloadImage(format) {
+            const link = document.createElement('a');
+            link.download = `invitation.${format}`;
+            
+            if (format === 'jpg') {
+                // Для JPG создаем белый фон
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                
+                tempCtx.fillStyle = 'white';
+                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                tempCtx.drawImage(canvas, 0, 0);
+                
+                link.href = tempCanvas.toDataURL('image/jpeg', 0.9);
+            } else {
+                link.href = canvas.toDataURL(`image/${format}`);
+            }
+            
+            link.click();
+        }
+        
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgData = canvas.toDataURL('image/png');
+            
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const canvasAspectRatio = canvas.width / canvas.height;
+            const pdfAspectRatio = pdfWidth / pdfHeight;
+            
+            let renderWidth, renderHeight;
+            
+            if (canvasAspectRatio < pdfAspectRatio) {
+                renderHeight = pdfHeight;
+                renderWidth = pdfHeight * canvasAspectRatio;
+            } else {
+                renderWidth = pdfWidth;
+                renderHeight = pdfWidth / canvasAspectRatio;
+            }
+            
+            const x = (pdfWidth - renderWidth) / 2;
+            const y = (pdfHeight - renderHeight) / 2;
+            
+            pdf.addImage(imgData, 'PNG', x, y, renderWidth, renderHeight);
+            pdf.save('invitation.pdf');
+        }
+        
+        function saveProject() {
+            const projectData = {
+                template: currentTemplate,
+                customImage: customImage,
+                textPositions: textPositions,
+                mainText: document.getElementById('mainText').value,
+                dateText: document.getElementById('dateText').value,
+                locationText: document.getElementById('locationText').value,
+                textColor: document.getElementById('textColor').value,
+                fontSize: document.getElementById('fontSize').value,
+                fontFamily: document.getElementById('fontFamily').value,
+                isBold: isBold,
+                isItalic: isItalic,
+                overlayOpacity: document.getElementById('overlayOpacity').value
+            };
+            
+            const dataStr = JSON.stringify(projectData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'invitation_project.json';
+            link.click();
+        }
+        
+        // Инициализация
+        resetTextPositions();
+        loadBackgroundImage(templateImages[currentTemplate], updateCanvas);
+    </script>
+</body>
+</html>
