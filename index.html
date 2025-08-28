@@ -53,6 +53,34 @@
             padding: 20px;
             border-right: 1px solid #e9ecef;
             overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .templates-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .templates-grid::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .templates-grid::-webkit-scrollbar-thumb {
+            background: #4ecdc4;
+            border-radius: 3px;
+        }
+
+        .templates-grid::-webkit-scrollbar-thumb:hover {
+            background: #44a08d;
         }
 
         .template-loading {
@@ -111,8 +139,7 @@
 
         .template-item {
             width: 100%;
-            height: 160px;
-            margin-bottom: 15px;
+            height: 120px;
             border: 3px solid transparent;
             border-radius: 12px;
             cursor: pointer;
@@ -414,12 +441,40 @@
             .templates-panel {
                 border-right: none;
                 border-bottom: 1px solid #e9ecef;
-                max-height: 200px;
+                max-height: 300px;
+            }
+
+            .templates-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                max-height: 250px;
             }
             
             .controls-panel {
                 border-left: none;
                 border-top: 1px solid #e9ecef;
+            }
+
+            .canvas-area {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .templates-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .template-item {
+                height: 100px;
+            }
+
+            .canvas-area {
+                padding: 20px;
+            }
+
+            #canvas {
+                max-height: 400px;
             }
         }
     </style>
@@ -440,55 +495,57 @@
                     <small>JPG, PNG до 5MB</small>
                     <input type="file" id="fileInput" accept="image/*" style="display: none;">
                 </div>
-                
-                <div class="template-item active" data-template="wedding" 
-                     style="background-image: url('./img/wedding.jpg')">
-                    <div class="template-name">Свадьба</div>
-                </div>
-                
-                <div class="template-item" data-template="birthday" 
-                     style="background-image: url('./img/birthday.jpg')">
-                    <div class="template-name">День рождения</div>
-                </div>
-                
-                <div class="template-item" data-template="party" 
-                     style="background-image: url('./img/party.jpg')">
-                    <div class="template-name">Вечеринка</div>
-                </div>
-                
-                <div class="template-item" data-template="graduation" 
-                     style="background-image: url('./img/graduation.jpg')">
-                    <div class="template-name">Выпускной</div>
-                </div>
-                
-                <div class="template-item" data-template="christmas" 
-                     style="background-image: url('./img/christmas.jpg')">
-                    <div class="template-name">Новый год</div>
-                </div>
-                
-                <div class="template-item" data-template="business" 
-                     style="background-image: url('./img/business.jpg')">
-                    <div class="template-name">Деловое</div>
-                </div>
-                
-                <div class="template-item" data-template="elegant" 
-                     style="background-image: url('./img/elegant.jpg')">
-                    <div class="template-name">Элегантное</div>
-                </div>
-                
-                <div class="template-item" data-template="traditional" 
-                     style="background-image: url('./img/traditional.jpg')">
-                    <div class="template-name">Традиционный</div>
-                </div>
-                
-                <div class="template-item" data-template="modern" 
-                     style="background-image: url('./img/modern.jpg')">
-                    <div class="template-name">Современный</div>
-                </div>
-                
-                <div class="template-item" data-template="floral" 
-                     style="background-image: url('./img/floral.jpg')">
-                    <div class="template-name">Цветочный</div>
+
+                <div class="templates-grid">
+                    <div class="template-item active" data-template="wedding" 
+                         style="background-image: url('./img/wedding.jpg')">
+                        <div class="template-name">Свадьба</div>
+                    </div>
+                    
+                    <div class="template-item" data-template="birthday" 
+                         style="background-image: url('./img/birthday.jpg')">
+                        <div class="template-name">День рождения</div>
+                    </div>
+                    
+                    <div class="template-item" data-template="party" 
+                         style="background-image: url('./img/party.jpg')">
+                        <div class="template-name">Вечеринка</div>
+                    </div>
+                    
+                    <div class="template-item" data-template="graduation" 
+                         style="background-image: url('./img/graduation.jpg')">
+                        <div class="template-name">Выпускной</div>
+                    </div>
+                    
+                    <div class="template-item" data-template="christmas" 
+                         style="background-image: url('./img/christmas.jpg')">
+                        <div class="template-name">Новый год</div>
+                    </div>
+                    
+                    <div class="template-item" data-template="business" 
+                         style="background-image: url('./img/business.jpg')">
+                        <div class="template-name">Деловое</div>
+                    </div>
+                    
+                    <div class="template-item" data-template="elegant" 
+                         style="background-image: url('./img/elegant.jpg')">
+                        <div class="template-name">Элегантное</div>
+                    </div>
+                    
+                    <div class="template-item" data-template="traditional" 
+                         style="background-image: url('./img/traditional.jpg')">
+                        <div class="template-name">Традиционный</div>
+                    </div>
+                    
+                    <div class="template-item" data-template="modern" 
+                         style="background-image: url('./img/modern.jpg')">
+                        <div class="template-name">Современный</div>
+                    </div>
+                    
+                    <div class="template-item" data-template="floral" 
+                         style="background-image: url('./img/floral.jpg')">
+                        <div class="template-name">Цветочный</div>
+                    </div>
                 </div>
             </div>
             
@@ -982,16 +1039,27 @@
             wrapText(hosts, textPositions.hosts.x, textPositions.hosts.y, canvas.width - 60, hostsLineHeight, 'hosts');
         }
         
-        // Функции для работы с перетаскиванием
+        // Функции для работы с перетаскиванием (мышь и сенсор)
         function getMousePos(e) {
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
             
+            // Определяем координаты для мыши или касания
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
             return {
-                x: (e.clientX - rect.left) * scaleX,
-                y: (e.clientY - rect.top) * scaleY
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
             };
+        }
+        
+        function getTouchPos(e) {
+            if (e.touches && e.touches.length > 0) {
+                return getMousePos(e.touches[0]);
+            }
+            return null;
         }
         
         function getTextAtPosition(x, y) {
@@ -1021,6 +1089,57 @@
                 setActiveBlock(textId);
                 e.preventDefault();
             }
+        });
+
+        // События сенсорного управления
+        canvas.addEventListener('touchstart', function(e) {
+            const touchPos = getTouchPos(e);
+            if (!touchPos) return;
+            
+            const textId = getTextAtPosition(touchPos.x, touchPos.y);
+            
+            if (textId) {
+                isDragging = true;
+                dragTarget = textId;
+                lastMousePos = touchPos;
+                
+                // Активируем блок для редактирования
+                setActiveBlock(textId);
+                e.preventDefault();
+            }
+        });
+
+        canvas.addEventListener('touchmove', function(e) {
+            if (isDragging && dragTarget) {
+                const touchPos = getTouchPos(e);
+                if (!touchPos) return;
+
+                const deltaX = touchPos.x - lastMousePos.x;
+                const deltaY = touchPos.y - lastMousePos.y;
+                
+                textPositions[dragTarget].x += deltaX;
+                textPositions[dragTarget].y += deltaY;
+                
+                // Ограничиваем позицию в пределах canvas
+                textPositions[dragTarget].x = Math.max(30, Math.min(canvas.width - 30, textPositions[dragTarget].x));
+                textPositions[dragTarget].y = Math.max(30, Math.min(canvas.height - 30, textPositions[dragTarget].y));
+                
+                lastMousePos = touchPos;
+                updateCanvas();
+                e.preventDefault();
+            }
+        });
+
+        canvas.addEventListener('touchend', function(e) {
+            isDragging = false;
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('touchcancel', function(e) {
+            isDragging = false;
+            dragTarget = null;
+            updateCanvas();
+            e.preventDefault();
         });
         
         function setActiveBlock(blockId) {
