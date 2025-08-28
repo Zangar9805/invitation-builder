@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Конструктор Приглашений</title>
+    <title>Toi-Shashu.kz - Конструктор Приглашений</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Merriweather:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -304,8 +306,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>✨ Конструктор Приглашений</h1>
-            <p>Создавайте красивые приглашения на основе готовых фотографий</p>
+            <h1>✨ Toi-Shashu.kz</h1>
+            <p>Жаңа буынның шақыру картасы конструкторы</p>
         </div>
         
         <div class="main-content">
@@ -388,15 +390,30 @@
                 </div>
                 
                 <div class="control-group">
+                    <label>📏 Ширина текста</label>
+                    <input type="range" id="textWidth" min="200" max="380" value="340" class="range-input">
+                    <small id="textWidthValue">340px</small>
+                </div>
+                
+                <div class="control-group">
+                    <label>📐 Межстрочный интервал</label>
+                    <input type="range" id="lineSpacing" min="1.0" max="2.5" step="0.1" value="1.2" class="range-input">
+                    <small id="lineSpacingValue">1.2</small>
+                </div>
+                
+                <div class="control-group">
                     <label>🔤 Шрифт</label>
                     <select id="fontFamily">
+                        <option value="'Noto Sans', Arial, sans-serif">Noto Sans (Универсальный)</option>
+                        <option value="'Noto Serif', Georgia, serif">Noto Serif (Элегантный)</option>
+                        <option value="'Roboto', Arial, sans-serif">Roboto (Современный)</option>
+                        <option value="'Open Sans', Arial, sans-serif">Open Sans (Чистый)</option>
+                        <option value="'Merriweather', Georgia, serif">Merriweather (Читабельный)</option>
+                        <option value="'Playfair Display', Georgia, serif">Playfair Display (Роскошный)</option>
+                        <option value="'Cormorant Garamond', Georgia, serif">Cormorant Garamond (Классический)</option>
                         <option value="Arial, sans-serif">Arial</option>
                         <option value="Georgia, serif">Georgia</option>
                         <option value="'Times New Roman', serif">Times New Roman</option>
-                        <option value="'Courier New', monospace">Courier New</option>
-                        <option value="Verdana, sans-serif">Verdana</option>
-                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-                        <option value="Impact, sans-serif">Impact</option>
                     </select>
                 </div>
                 
@@ -525,12 +542,16 @@
             const lines = [];
             let currentY = y;
             
+            // Получаем ширину текста из слайдера
+            const textWidth = parseInt(document.getElementById('textWidth').value);
+            const actualMaxWidth = Math.min(maxWidth, textWidth);
+            
             for(let n = 0; n < words.length; n++) {
                 const testLine = line + words[n] + ' ';
                 const metrics = ctx.measureText(testLine);
                 const testWidth = metrics.width;
                 
-                if (testWidth > maxWidth && n > 0) {
+                if (testWidth > actualMaxWidth && n > 0) {
                     lines.push({text: line.trim(), y: currentY});
                     line = words[n] + ' ';
                     currentY += lineHeight;
@@ -547,9 +568,9 @@
             if (getId) {
                 // Сохраняем область для детекции клика
                 const textBounds = {
-                    x: x - maxWidth/2,
+                    x: x - actualMaxWidth/2,
                     y: startY - lineHeight/2,
-                    width: maxWidth,
+                    width: actualMaxWidth,
                     height: totalHeight + lineHeight,
                     id: getId
                 };
@@ -590,6 +611,7 @@
             const textColor = document.getElementById('textColor').value;
             const fontSize = parseInt(document.getElementById('fontSize').value);
             const fontFamily = document.getElementById('fontFamily').value;
+            const lineSpacing = parseFloat(document.getElementById('lineSpacing').value);
             
             ctx.fillStyle = textColor;
             ctx.textAlign = 'center';
@@ -602,15 +624,18 @@
             
             // Основной текст
             ctx.font = `${fontStyle}${fontSize}px ${fontFamily}`;
-            wrapText(mainText, textPositions.mainText.x, textPositions.mainText.y, canvas.width - 60, fontSize + 10, 'mainText');
+            const mainLineHeight = (fontSize + 10) * lineSpacing;
+            wrapText(mainText, textPositions.mainText.x, textPositions.mainText.y, canvas.width - 60, mainLineHeight, 'mainText');
             
             // Дата
             ctx.font = `${fontStyle}${fontSize * 0.7}px ${fontFamily}`;
-            wrapText(dateText, textPositions.dateText.x, textPositions.dateText.y, canvas.width - 60, (fontSize * 0.7) + 8, 'dateText');
+            const dateLineHeight = ((fontSize * 0.7) + 8) * lineSpacing;
+            wrapText(dateText, textPositions.dateText.x, textPositions.dateText.y, canvas.width - 60, dateLineHeight, 'dateText');
             
             // Место
             ctx.font = `${fontStyle}${fontSize * 0.6}px ${fontFamily}`;
-            wrapText(locationText, textPositions.locationText.x, textPositions.locationText.y, canvas.width - 60, (fontSize * 0.6) + 6, 'locationText');
+            const locationLineHeight = ((fontSize * 0.6) + 6) * lineSpacing;
+            wrapText(locationText, textPositions.locationText.x, textPositions.locationText.y, canvas.width - 60, locationLineHeight, 'locationText');
         }
         
         // Функции для работы с перетаскиванием
@@ -766,6 +791,16 @@
             updateCanvas();
         });
         
+        document.getElementById('textWidth').addEventListener('input', function() {
+            document.getElementById('textWidthValue').textContent = this.value + 'px';
+            updateCanvas();
+        });
+        
+        document.getElementById('lineSpacing').addEventListener('input', function() {
+            document.getElementById('lineSpacingValue').textContent = this.value;
+            updateCanvas();
+        });
+        
         document.getElementById('overlayOpacity').addEventListener('input', function() {
             document.getElementById('overlayValue').textContent = this.value + '%';
             updateCanvas();
@@ -869,6 +904,8 @@
                 locationText: document.getElementById('locationText').value,
                 textColor: document.getElementById('textColor').value,
                 fontSize: document.getElementById('fontSize').value,
+                textWidth: document.getElementById('textWidth').value,
+                lineSpacing: document.getElementById('lineSpacing').value,
                 fontFamily: document.getElementById('fontFamily').value,
                 isBold: isBold,
                 isItalic: isItalic,
