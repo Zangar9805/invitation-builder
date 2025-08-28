@@ -120,9 +120,9 @@
         }
 
         .canvas-area {
-            padding: 40px;
+            padding: 20px 40px 40px 40px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             background: #f8f9fa;
         }
@@ -152,6 +152,7 @@
             padding: 30px;
             border-left: 1px solid #e9ecef;
             overflow-y: auto;
+            max-height: 100vh;
         }
 
         .control-group {
@@ -230,6 +231,58 @@
             border-color: #4ecdc4;
             background: #4ecdc4;
             color: white;
+        }
+
+        .active-block {
+            background: linear-gradient(45deg, rgba(78, 205, 196, 0.1), rgba(255, 107, 107, 0.1));
+            border: 2px solid #4ecdc4;
+            border-radius: 8px;
+        }
+
+        .block-controls {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #4ecdc4;
+        }
+
+        .block-controls.active {
+            display: block;
+        }
+
+        .block-controls h4 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mini-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mini-control {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mini-control label {
+            font-size: 0.8em;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .mini-control input, .mini-control select {
+            padding: 6px;
+            font-size: 0.85em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
 
         .download-buttons {
@@ -366,67 +419,168 @@
                 <div class="control-group">
                     <label>👥 Шақырту иелері</label>
                     <input type="text" id="invitationTo" placeholder="Құрметті достар мен әріптестер..." value="Құрметті достар мен әріптестер!">
+                    <div class="block-controls" id="invitationTo-controls">
+                        <h4>⚙️ Настройки блока: Шақырту иелері</h4>
+                        <div class="mini-controls">
+                            <div class="mini-control">
+                                <label>Размер</label>
+                                <input type="range" id="invitationTo-fontSize" min="12" max="36" value="16">
+                                <small id="invitationTo-fontSize-value">16px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Ширина</label>
+                                <input type="range" id="invitationTo-textWidth" min="150" max="380" value="300">
+                                <small id="invitationTo-textWidth-value">300px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Шрифт</label>
+                                <select id="invitationTo-fontFamily">
+                                    <option value="'Noto Sans', Arial, sans-serif">Noto Sans</option>
+                                    <option value="'Noto Serif', Georgia, serif">Noto Serif</option>
+                                    <option value="'Roboto', Arial, sans-serif">Roboto</option>
+                                    <option value="'Playfair Display', Georgia, serif">Playfair Display</option>
+                                </select>
+                            </div>
+                            <div class="mini-control">
+                                <label>Цвет</label>
+                                <input type="color" id="invitationTo-color" value="#ffffff">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="control-group">
                     <label>📝 Шақырту мәтіні</label>
                     <textarea id="mainText" placeholder="Негізгі шақыру мәтінін енгізіңіз...">Сіздерді, мерейлі 50 жас мерейтойымыз арнайы жайылған дастарханымызның қадірлі қонағы болуға шақырамыз!</textarea>
+                    <div class="block-controls" id="mainText-controls">
+                        <h4>⚙️ Настройки блока: Шақырту мәтіні</h4>
+                        <div class="mini-controls">
+                            <div class="mini-control">
+                                <label>Размер</label>
+                                <input type="range" id="mainText-fontSize" min="16" max="48" value="24">
+                                <small id="mainText-fontSize-value">24px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Ширина</label>
+                                <input type="range" id="mainText-textWidth" min="200" max="380" value="340">
+                                <small id="mainText-textWidth-value">340px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Шрифт</label>
+                                <select id="mainText-fontFamily">
+                                    <option value="'Noto Sans', Arial, sans-serif">Noto Sans</option>
+                                    <option value="'Noto Serif', Georgia, serif">Noto Serif</option>
+                                    <option value="'Roboto', Arial, sans-serif">Roboto</option>
+                                    <option value="'Playfair Display', Georgia, serif">Playfair Display</option>
+                                </select>
+                            </div>
+                            <div class="mini-control">
+                                <label>Цвет</label>
+                                <input type="color" id="mainText-color" value="#ffffff">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="control-group">
                     <label>⏰ Уақыты</label>
                     <input type="text" id="dateTime" placeholder="12 қаңтар / сағат 19:30" value="12 қаңтар / сағат 19:30">
+                    <div class="block-controls" id="dateTime-controls">
+                        <h4>⚙️ Настройки блока: Уақыты</h4>
+                        <div class="mini-controls">
+                            <div class="mini-control">
+                                <label>Размер</label>
+                                <input type="range" id="dateTime-fontSize" min="14" max="40" value="19">
+                                <small id="dateTime-fontSize-value">19px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Ширина</label>
+                                <input type="range" id="dateTime-textWidth" min="180" max="380" value="320">
+                                <small id="dateTime-textWidth-value">320px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Шрифт</label>
+                                <select id="dateTime-fontFamily">
+                                    <option value="'Noto Sans', Arial, sans-serif">Noto Sans</option>
+                                    <option value="'Noto Serif', Georgia, serif">Noto Serif</option>
+                                    <option value="'Roboto', Arial, sans-serif">Roboto</option>
+                                    <option value="'Playfair Display', Georgia, serif">Playfair Display</option>
+                                </select>
+                            </div>
+                            <div class="mini-control">
+                                <label>Цвет</label>
+                                <input type="color" id="dateTime-color" value="#ffffff">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="control-group">
                     <label>📍 Мекен-жайымыз</label>
                     <input type="text" id="location" placeholder="Жетібай ауылы, 'Достық' мейрамханасы" value="Жетібай ауылы, 'Достық' мейрамханасы">
+                    <div class="block-controls" id="location-controls">
+                        <h4>⚙️ Настройки блока: Мекен-жайымыз</h4>
+                        <div class="mini-controls">
+                            <div class="mini-control">
+                                <label>Размер</label>
+                                <input type="range" id="location-fontSize" min="12" max="32" value="17">
+                                <small id="location-fontSize-value">17px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Ширина</label>
+                                <input type="range" id="location-textWidth" min="160" max="380" value="310">
+                                <small id="location-textWidth-value">310px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Шрифт</label>
+                                <select id="location-fontFamily">
+                                    <option value="'Noto Sans', Arial, sans-serif">Noto Sans</option>
+                                    <option value="'Noto Serif', Georgia, serif">Noto Serif</option>
+                                    <option value="'Roboto', Arial, sans-serif">Roboto</option>
+                                    <option value="'Playfair Display', Georgia, serif">Playfair Display</option>
+                                </select>
+                            </div>
+                            <div class="mini-control">
+                                <label>Цвет</label>
+                                <input type="color" id="location-color" value="#ffffff">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="control-group">
                     <label>🎭 Той иелері</label>
                     <input type="text" id="hosts" placeholder="Ержан - Гүлшат" value="Той иелері: Ержан - Гүлшат">
+                    <div class="block-controls" id="hosts-controls">
+                        <h4>⚙️ Настройки блока: Той иелері</h4>
+                        <div class="mini-controls">
+                            <div class="mini-control">
+                                <label>Размер</label>
+                                <input type="range" id="hosts-fontSize" min="12" max="36" value="18">
+                                <small id="hosts-fontSize-value">18px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Ширина</label>
+                                <input type="range" id="hosts-textWidth" min="170" max="380" value="320">
+                                <small id="hosts-textWidth-value">320px</small>
+                            </div>
+                            <div class="mini-control">
+                                <label>Шрифт</label>
+                                <select id="hosts-fontFamily">
+                                    <option value="'Noto Sans', Arial, sans-serif">Noto Sans</option>
+                                    <option value="'Noto Serif', Georgia, serif">Noto Serif</option>
+                                    <option value="'Roboto', Arial, sans-serif">Roboto</option>
+                                    <option value="'Playfair Display', Georgia, serif">Playfair Display</option>
+                                </select>
+                            </div>
+                            <div class="mini-control">
+                                <label>Цвет</label>
+                                <input type="color" id="hosts-color" value="#ffffff">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="control-group">
-                    <label>🎨 Цвет текста</label>
-                    <input type="color" id="textColor" value="#ffffff" class="color-input">
-                </div>
-                
-                <div class="control-group">
-                    <label>📏 Размер шрифта</label>
-                    <input type="range" id="fontSize" min="16" max="48" value="24" class="range-input">
-                    <small id="fontSizeValue">24px</small>
-                </div>
-                
-                <div class="control-group">
-                    <label>📏 Ширина текста</label>
-                    <input type="range" id="textWidth" min="200" max="380" value="340" class="range-input">
-                    <small id="textWidthValue">340px</small>
-                </div>
-                
-                <div class="control-group">
-                    <label>📐 Межстрочный интервал</label>
-                    <input type="range" id="lineSpacing" min="1.0" max="2.5" step="0.1" value="1.2" class="range-input">
-                    <small id="lineSpacingValue">1.2</small>
-                </div>
-                
-                <div class="control-group">
-                    <label>🔤 Шрифт</label>
-                    <select id="fontFamily">
-                        <option value="'Noto Sans', Arial, sans-serif">Noto Sans (Универсальный)</option>
-                        <option value="'Noto Serif', Georgia, serif">Noto Serif (Элегантный)</option>
-                        <option value="'Roboto', Arial, sans-serif">Roboto (Современный)</option>
-                        <option value="'Open Sans', Arial, sans-serif">Open Sans (Чистый)</option>
-                        <option value="'Merriweather', Georgia, serif">Merriweather (Читабельный)</option>
-                        <option value="'Playfair Display', Georgia, serif">Playfair Display (Роскошный)</option>
-                        <option value="'Cormorant Garamond', Georgia, serif">Cormorant Garamond (Классический)</option>
-                        <option value="Arial, sans-serif">Arial</option>
-                        <option value="Georgia, serif">Georgia</option>
-                        <option value="'Times New Roman', serif">Times New Roman</option>
-                    </select>
-                </div>
-                
+
                 <div class="control-group">
                     <label>✨ Стиль текста</label>
                     <div class="text-controls">
@@ -442,6 +596,12 @@
                         <button class="text-style-btn" id="centerBtn">⊞ Центр</button>
                     </div>
                     <small>💡 Перетащите текст мышкой прямо на изображении</small>
+                </div>
+
+                <div class="control-group">
+                    <label>📐 Межстрочный интервал</label>
+                    <input type="range" id="lineSpacing" min="1.0" max="2.5" step="0.1" value="1.2" class="range-input">
+                    <small id="lineSpacingValue">1.2</small>
                 </div>
                 
                 <div class="control-group">
@@ -483,6 +643,16 @@
         let isDragging = false;
         let dragTarget = null;
         let lastMousePos = { x: 0, y: 0 };
+        let activeBlock = null;
+        
+        // Индивидуальные настройки для каждого блока
+        let blockSettings = {
+            invitationTo: { fontSize: 16, textWidth: 300, fontFamily: "'Noto Sans', Arial, sans-serif", color: '#ffffff' },
+            mainText: { fontSize: 24, textWidth: 340, fontFamily: "'Noto Sans', Arial, sans-serif", color: '#ffffff' },
+            dateTime: { fontSize: 19, textWidth: 320, fontFamily: "'Noto Sans', Arial, sans-serif", color: '#ffffff' },
+            location: { fontSize: 17, textWidth: 310, fontFamily: "'Noto Sans', Arial, sans-serif", color: '#ffffff' },
+            hosts: { fontSize: 18, textWidth: 320, fontFamily: "'Noto Sans', Arial, sans-serif", color: '#ffffff' }
+        };
         
         const templateImages = {
             wedding: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=600&fit=crop',
@@ -503,7 +673,6 @@
             };
             img.onerror = function() {
                 console.error('Ошибка загрузки изображения:', imageSrc);
-                // Создаем градиентный фон как резерв
                 currentBackgroundImage = null;
                 if (callback) callback();
             };
@@ -554,9 +723,9 @@
             const lines = [];
             let currentY = y;
             
-            // Получаем ширину текста из слайдера
-            const textWidth = parseInt(document.getElementById('textWidth').value);
-            const actualMaxWidth = Math.min(maxWidth, textWidth);
+            // Получаем индивидуальные настройки блока
+            const blockTextWidth = getId ? blockSettings[getId].textWidth : parseInt(document.getElementById('textWidth')?.value || 340);
+            const actualMaxWidth = Math.min(maxWidth, blockTextWidth);
             
             for(let n = 0; n < words.length; n++) {
                 const testLine = line + words[n] + ' ';
@@ -587,13 +756,13 @@
                     id: getId
                 };
                 
-                // Подсветка при наведении
-                if (dragTarget === getId) {
+                // Подсветка при наведении или если блок активен
+                if (dragTarget === getId || activeBlock === getId) {
                     ctx.save();
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.fillStyle = activeBlock === getId ? 'rgba(78, 205, 196, 0.3)' : 'rgba(255, 255, 255, 0.2)';
                     ctx.fillRect(textBounds.x, textBounds.y, textBounds.width, textBounds.height);
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = activeBlock === getId ? 'rgba(78, 205, 196, 0.8)' : 'rgba(255, 255, 255, 0.5)';
+                    ctx.lineWidth = activeBlock === getId ? 3 : 2;
                     ctx.strokeRect(textBounds.x, textBounds.y, textBounds.width, textBounds.height);
                     ctx.restore();
                 }
@@ -622,43 +791,49 @@
             const dateTime = document.getElementById('dateTime').value;
             const location = document.getElementById('location').value;
             const hosts = document.getElementById('hosts').value;
-            const textColor = document.getElementById('textColor').value;
-            const fontSize = parseInt(document.getElementById('fontSize').value);
-            const fontFamily = document.getElementById('fontFamily').value;
-            const lineSpacing = parseFloat(document.getElementById('lineSpacing').value);
+            const lineSpacing = parseFloat(document.getElementById('lineSpacing')?.value || 1.2);
             
-            ctx.fillStyle = textColor;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             
-            // Настройка стиля шрифта
+            // Настройка стиля шрифта для общих стилей
             let fontStyle = '';
             if (isItalic) fontStyle += 'italic ';
             if (isBold) fontStyle += 'bold ';
             
-            // 1. Шақырту иелері (меньший размер, элегантный)
-            ctx.font = `${fontStyle}${fontSize * 0.65}px ${fontFamily}`;
-            const invitationToLineHeight = ((fontSize * 0.65) + 6) * lineSpacing;
+            // 1. Шақырту иелері
+            const invitationToSettings = blockSettings.invitationTo;
+            ctx.fillStyle = invitationToSettings.color;
+            ctx.font = `${fontStyle}${invitationToSettings.fontSize}px ${invitationToSettings.fontFamily}`;
+            const invitationToLineHeight = (invitationToSettings.fontSize + 6) * lineSpacing;
             wrapText(invitationTo, textPositions.invitationTo.x, textPositions.invitationTo.y, canvas.width - 60, invitationToLineHeight, 'invitationTo');
             
             // 2. Шақырту мәтіні (основной текст)
-            ctx.font = `${fontStyle}${fontSize}px ${fontFamily}`;
-            const mainLineHeight = (fontSize + 10) * lineSpacing;
+            const mainTextSettings = blockSettings.mainText;
+            ctx.fillStyle = mainTextSettings.color;
+            ctx.font = `${fontStyle}${mainTextSettings.fontSize}px ${mainTextSettings.fontFamily}`;
+            const mainLineHeight = (mainTextSettings.fontSize + 10) * lineSpacing;
             wrapText(mainText, textPositions.mainText.x, textPositions.mainText.y, canvas.width - 60, mainLineHeight, 'mainText');
             
             // 3. Уақыты (дата и время)
-            ctx.font = `${fontStyle}${fontSize * 0.8}px ${fontFamily}`;
-            const dateTimeLineHeight = ((fontSize * 0.8) + 8) * lineSpacing;
+            const dateTimeSettings = blockSettings.dateTime;
+            ctx.fillStyle = dateTimeSettings.color;
+            ctx.font = `${fontStyle}${dateTimeSettings.fontSize}px ${dateTimeSettings.fontFamily}`;
+            const dateTimeLineHeight = (dateTimeSettings.fontSize + 8) * lineSpacing;
             wrapText(dateTime, textPositions.dateTime.x, textPositions.dateTime.y, canvas.width - 60, dateTimeLineHeight, 'dateTime');
             
             // 4. Мекен-жайымыз (место)
-            ctx.font = `${fontStyle}${fontSize * 0.7}px ${fontFamily}`;
-            const locationLineHeight = ((fontSize * 0.7) + 6) * lineSpacing;
+            const locationSettings = blockSettings.location;
+            ctx.fillStyle = locationSettings.color;
+            ctx.font = `${fontStyle}${locationSettings.fontSize}px ${locationSettings.fontFamily}`;
+            const locationLineHeight = (locationSettings.fontSize + 6) * lineSpacing;
             wrapText(location, textPositions.location.x, textPositions.location.y, canvas.width - 60, locationLineHeight, 'location');
             
             // 5. Той иелері (хозяева торжества)
-            ctx.font = `${fontStyle}${fontSize * 0.75}px ${fontFamily}`;
-            const hostsLineHeight = ((fontSize * 0.75) + 7) * lineSpacing;
+            const hostsSettings = blockSettings.hosts;
+            ctx.fillStyle = hostsSettings.color;
+            ctx.font = `${fontStyle}${hostsSettings.fontSize}px ${hostsSettings.fontFamily}`;
+            const hostsLineHeight = (hostsSettings.fontSize + 7) * lineSpacing;
             wrapText(hosts, textPositions.hosts.x, textPositions.hosts.y, canvas.width - 60, hostsLineHeight, 'hosts');
         }
         
@@ -686,7 +861,7 @@
             return null;
         }
         
-        // События мыши для перетаскивания
+        // События мыши для перетаскивания и выделения
         canvas.addEventListener('mousedown', function(e) {
             const mousePos = getMousePos(e);
             const textId = getTextAtPosition(mousePos.x, mousePos.y);
@@ -696,9 +871,83 @@
                 dragTarget = textId;
                 lastMousePos = mousePos;
                 canvas.style.cursor = 'grabbing';
+                
+                // Активируем блок для редактирования
+                setActiveBlock(textId);
                 e.preventDefault();
             }
         });
+        
+        function setActiveBlock(blockId) {
+            // Убираем активность со всех блоков
+            document.querySelectorAll('.control-group').forEach(group => {
+                group.classList.remove('active-block');
+            });
+            document.querySelectorAll('.block-controls').forEach(control => {
+                control.classList.remove('active');
+            });
+            
+            // Активируем выбранный блок
+            if (blockId) {
+                activeBlock = blockId;
+                const blockInput = document.getElementById(blockId);
+                if (blockInput) {
+                    blockInput.closest('.control-group').classList.add('active-block');
+                    document.getElementById(blockId + '-controls').classList.add('active');
+                    
+                    // Прокручиваем к активному блоку
+                    blockInput.closest('.control-group').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }
+                updateCanvas();
+            }
+        }
+        
+        // Обработчики для индивидуальных настроек блоков
+        function setupBlockControls() {
+            const blocks = ['invitationTo', 'mainText', 'dateTime', 'location', 'hosts'];
+            
+            blocks.forEach(blockId => {
+                // Размер шрифта
+                const fontSizeSlider = document.getElementById(blockId + '-fontSize');
+                const fontSizeValue = document.getElementById(blockId + '-fontSize-value');
+                fontSizeSlider.addEventListener('input', function() {
+                    blockSettings[blockId].fontSize = parseInt(this.value);
+                    fontSizeValue.textContent = this.value + 'px';
+                    updateCanvas();
+                });
+                
+                // Ширина текста
+                const textWidthSlider = document.getElementById(blockId + '-textWidth');
+                const textWidthValue = document.getElementById(blockId + '-textWidth-value');
+                textWidthSlider.addEventListener('input', function() {
+                    blockSettings[blockId].textWidth = parseInt(this.value);
+                    textWidthValue.textContent = this.value + 'px';
+                    updateCanvas();
+                });
+                
+                // Шрифт
+                document.getElementById(blockId + '-fontFamily').addEventListener('change', function() {
+                    blockSettings[blockId].fontFamily = this.value;
+                    updateCanvas();
+                });
+                
+                // Цвет
+                document.getElementById(blockId + '-color').addEventListener('change', function() {
+                    blockSettings[blockId].color = this.value;
+                    updateCanvas();
+                });
+                
+                // Синхронизируем значения HTML с настройками
+                fontSizeSlider.value = blockSettings[blockId].fontSize;
+                fontSizeValue.textContent = blockSettings[blockId].fontSize + 'px';
+                textWidthSlider.value = blockSettings[blockId].textWidth;
+                textWidthValue.textContent = blockSettings[blockId].textWidth + 'px';
+                document.getElementById(blockId + '-color').value = blockSettings[blockId].color;
+            });
+        }
         
         canvas.addEventListener('mousemove', function(e) {
             const mousePos = getMousePos(e);
@@ -746,6 +995,7 @@
             canvas.style.cursor = 'default';
             updateCanvas();
         });
+        
         // Обработчики событий для шаблонов
         document.querySelectorAll('.template-item').forEach(item => {
             item.addEventListener('click', function() {
@@ -809,26 +1059,17 @@
         document.getElementById('dateTime').addEventListener('input', updateCanvas);
         document.getElementById('location').addEventListener('input', updateCanvas);
         document.getElementById('hosts').addEventListener('input', updateCanvas);
-        document.getElementById('textColor').addEventListener('change', updateCanvas);
-        document.getElementById('fontFamily').addEventListener('change', updateCanvas);
+        document.getElementById('textColor')?.addEventListener('change', updateCanvas);
+        document.getElementById('fontSize')?.addEventListener('input', updateCanvas);
+        document.getElementById('fontFamily')?.addEventListener('change', updateCanvas);
         
-        document.getElementById('fontSize').addEventListener('input', function() {
-            document.getElementById('fontSizeValue').textContent = this.value + 'px';
-            updateCanvas();
-        });
-        
-        document.getElementById('textWidth').addEventListener('input', function() {
-            document.getElementById('textWidthValue').textContent = this.value + 'px';
+        document.getElementById('overlayOpacity').addEventListener('input', function() {
+            document.getElementById('overlayValue').textContent = this.value + '%';
             updateCanvas();
         });
         
         document.getElementById('lineSpacing').addEventListener('input', function() {
             document.getElementById('lineSpacingValue').textContent = this.value;
-            updateCanvas();
-        });
-        
-        document.getElementById('overlayOpacity').addEventListener('input', function() {
-            document.getElementById('overlayValue').textContent = this.value + '%';
             updateCanvas();
         });
         
@@ -929,16 +1170,16 @@
                 template: currentTemplate,
                 customImage: customImage,
                 textPositions: textPositions,
+                blockSettings: blockSettings,
                 invitationTo: document.getElementById('invitationTo').value,
                 mainText: document.getElementById('mainText').value,
                 dateTime: document.getElementById('dateTime').value,
                 location: document.getElementById('location').value,
                 hosts: document.getElementById('hosts').value,
-                textColor: document.getElementById('textColor').value,
-                fontSize: document.getElementById('fontSize').value,
-                textWidth: document.getElementById('textWidth').value,
+                fontSize: document.getElementById('fontSize')?.value,
+                textWidth: document.getElementById('textWidth')?.value,
                 lineSpacing: document.getElementById('lineSpacing').value,
-                fontFamily: document.getElementById('fontFamily').value,
+                fontFamily: document.getElementById('fontFamily')?.value,
                 isBold: isBold,
                 isItalic: isItalic,
                 overlayOpacity: document.getElementById('overlayOpacity').value
@@ -954,6 +1195,7 @@
         
         // Инициализация
         resetTextPositions();
+        setupBlockControls();
         loadBackgroundImage(templateImages[currentTemplate], updateCanvas);
     </script>
 </body>
