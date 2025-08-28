@@ -374,38 +374,53 @@
                 </div>
                 
                 <div class="template-item active" data-template="wedding" 
-                     style="background-image: url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=600&fit=crop')">
+                     style="background-image: url('./img/wedding.jpg')">
                     <div class="template-name">Свадьба</div>
                 </div>
                 
                 <div class="template-item" data-template="birthday" 
-                     style="background-image: url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=600&fit=crop')">
+                     style="background-image: url('./img/birthday.jpg')">
                     <div class="template-name">День рождения</div>
                 </div>
                 
                 <div class="template-item" data-template="party" 
-                     style="background-image: url('https://images.unsplash.com/photo-1464207687429-7505649dae38?w=400&h=600&fit=crop')">
+                     style="background-image: url('./img/party.jpg')">
                     <div class="template-name">Вечеринка</div>
                 </div>
                 
                 <div class="template-item" data-template="graduation" 
-                     style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=600&fit=crop')">
+                     style="background-image: url('./img/graduation.jpg')">
                     <div class="template-name">Выпускной</div>
                 </div>
                 
                 <div class="template-item" data-template="christmas" 
-                     style="background-image: url('https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400&h=600&fit=crop')">
+                     style="background-image: url('./img/christmas.jpg')">
                     <div class="template-name">Новый год</div>
                 </div>
                 
                 <div class="template-item" data-template="business" 
-                     style="background-image: url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&h=600&fit=crop')">
+                     style="background-image: url('./img/business.jpg')">
                     <div class="template-name">Деловое</div>
                 </div>
                 
                 <div class="template-item" data-template="elegant" 
-                     style="background-image: url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=600&fit=crop')">
+                     style="background-image: url('./img/elegant.jpg')">
                     <div class="template-name">Элегантное</div>
+                </div>
+                
+                <div class="template-item" data-template="traditional" 
+                     style="background-image: url('./img/traditional.jpg')">
+                    <div class="template-name">Традиционный</div>
+                </div>
+                
+                <div class="template-item" data-template="modern" 
+                     style="background-image: url('./img/modern.jpg')">
+                    <div class="template-name">Современный</div>
+                </div>
+                
+                <div class="template-item" data-template="floral" 
+                     style="background-image: url('./img/floral.jpg')">
+                    <div class="template-name">Цветочный</div>
                 </div>
             </div>
             
@@ -655,27 +670,72 @@
         };
         
         const templateImages = {
-            wedding: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=600&fit=crop',
-            birthday: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=600&fit=crop',
-            party: 'https://images.unsplash.com/photo-1464207687429-7505649dae38?w=400&h=600&fit=crop',
-            graduation: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=600&fit=crop',
-            christmas: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400&h=600&fit=crop',
-            business: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&h=600&fit=crop',
-            elegant: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=600&fit=crop'
+            wedding: './img/wedding.jpg',
+            birthday: './img/birthday.jpg',
+            party: './img/party.jpg',
+            graduation: './img/graduation.jpg',
+            christmas: './img/christmas.jpg',
+            business: './img/business.jpg',
+            elegant: './img/elegant.jpg',
+            traditional: './img/traditional.jpg',
+            modern: './img/modern.jpg',
+            floral: './img/floral.jpg'
         };
         
         function loadBackgroundImage(imageSrc, callback) {
             const img = new Image();
-            img.crossOrigin = 'anonymous';
+            // Убираем crossOrigin для локальных файлов
+            // img.crossOrigin = 'anonymous';
+            
             img.onload = function() {
                 currentBackgroundImage = img;
+                console.log('Изображение загружено успешно:', imageSrc);
                 if (callback) callback();
             };
+            
             img.onerror = function() {
                 console.error('Ошибка загрузки изображения:', imageSrc);
-                currentBackgroundImage = null;
-                if (callback) callback();
+                // Попробуем загрузить резервное изображение из Unsplash
+                const fallbackImages = {
+                    wedding: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=600&fit=crop',
+                    birthday: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=600&fit=crop',
+                    party: 'https://images.unsplash.com/photo-1464207687429-7505649dae38?w=400&h=600&fit=crop',
+                    graduation: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=600&fit=crop',
+                    christmas: 'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400&h=600&fit=crop',
+                    business: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&h=600&fit=crop',
+                    elegant: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=600&fit=crop'
+                };
+                
+                // Найдем подходящее резервное изображение
+                let fallbackSrc = null;
+                for (let template in templateImages) {
+                    if (templateImages[template] === imageSrc && fallbackImages[template]) {
+                        fallbackSrc = fallbackImages[template];
+                        break;
+                    }
+                }
+                
+                if (fallbackSrc) {
+                    console.log('Загружаем резервное изображение:', fallbackSrc);
+                    const fallbackImg = new Image();
+                    fallbackImg.crossOrigin = 'anonymous';
+                    fallbackImg.onload = function() {
+                        currentBackgroundImage = fallbackImg;
+                        if (callback) callback();
+                    };
+                    fallbackImg.onerror = function() {
+                        console.error('Резервное изображение тоже не загрузилось');
+                        currentBackgroundImage = null;
+                        if (callback) callback();
+                    };
+                    fallbackImg.src = fallbackSrc;
+                } else {
+                    // Создаем градиентный фон как последний резерв
+                    currentBackgroundImage = null;
+                    if (callback) callback();
+                }
             };
+            
             img.src = imageSrc;
         }
         
@@ -1000,13 +1060,17 @@
         document.querySelectorAll('.template-item').forEach(item => {
             item.addEventListener('click', function() {
                 if (this.dataset.template) {
+                    console.log('Выбран шаблон:', this.dataset.template);
                     document.querySelector('.template-item.active').classList.remove('active');
                     this.classList.add('active');
                     currentTemplate = this.dataset.template;
                     customImage = null;
                     // Сброс позиций при смене шаблона
                     resetTextPositions();
-                    loadBackgroundImage(templateImages[currentTemplate], updateCanvas);
+                    
+                    const imagePath = templateImages[currentTemplate];
+                    console.log('Загружаем изображение:', imagePath);
+                    loadBackgroundImage(imagePath, updateCanvas);
                 }
             });
         });
@@ -1194,9 +1258,17 @@
         }
         
         // Инициализация
+        console.log('Инициализация приложения...');
         resetTextPositions();
         setupBlockControls();
-        loadBackgroundImage(templateImages[currentTemplate], updateCanvas);
+        
+        // Проверяем доступность первого шаблона
+        const initialTemplate = templateImages[currentTemplate];
+        console.log('Загружаем начальный шаблон:', initialTemplate);
+        loadBackgroundImage(initialTemplate, function() {
+            console.log('Начальный шаблон загружен, обновляем canvas');
+            updateCanvas();
+        });
     </script>
 </body>
 </html>
