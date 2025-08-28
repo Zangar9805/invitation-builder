@@ -1091,56 +1091,152 @@
             }
         });
 
+        // Добавим переменные для отслеживания состояния перетаскивания
+        let touchStartTime = 0;
+        let touchStartPos = null;
+        let isTouchDragging = false;
+        
         // События сенсорного управления
         canvas.addEventListener('touchstart', function(e) {
+            touchStartTime = Date.now();
             const touchPos = getTouchPos(e);
             if (!touchPos) return;
+            
+            touchStartPos = touchPos;
+            isTouchDragging = false;
             
             const textId = getTextAtPosition(touchPos.x, touchPos.y);
             
             if (textId) {
-                isDragging = true;
                 dragTarget = textId;
                 lastMousePos = touchPos;
                 
-                // Активируем блок для редактирования
-                setActiveBlock(textId);
+                // НЕ активируем блок сразу - дадим возможность начать перетаскивание
                 e.preventDefault();
             }
         });
 
         canvas.addEventListener('touchmove', function(e) {
-            if (isDragging && dragTarget) {
+            if (dragTarget) {
                 const touchPos = getTouchPos(e);
                 if (!touchPos) return;
 
-                const deltaX = touchPos.x - lastMousePos.x;
-                const deltaY = touchPos.y - lastMousePos.y;
+                // Проверяем, началось ли перетаскивание
+                const deltaX = Math.abs(touchPos.x - touchStartPos.x);
+                const deltaY = Math.abs(touchPos.y - touchStartPos.y);
                 
-                textPositions[dragTarget].x += deltaX;
-                textPositions[dragTarget].y += deltaY;
-                
-                // Ограничиваем позицию в пределах canvas
-                textPositions[dragTarget].x = Math.max(30, Math.min(canvas.width - 30, textPositions[dragTarget].x));
-                textPositions[dragTarget].y = Math.max(30, Math.min(canvas.height - 30, textPositions[dragTarget].y));
-                
-                lastMousePos = touchPos;
-                updateCanvas();
+                if (deltaX > 10 || deltaY > 10) { // Порог для начала перетаскивания
+                    isTouchDragging = true;
+                    isDragging = true;
+                }
+
+                if (isTouchDragging) {
+                    const moveX = touchPos.x - lastMousePos.x;
+                    const moveY = touchPos.y - lastMousePos.y;
+                    
+                    textPositions[dragTarget].x += moveX;
+                    textPositions[dragTarget].y += moveY;
+                    
+                    // Ограничиваем позицию в пределах canvas
+                    textPositions[dragTarget].x = Math.max(30, Math.min(canvas.width - 30, textPositions[dragTarget].x));
+                    textPositions[dragTarget].y = Math.max(30, Math.min(canvas.height - 30, textPositions[dragTarget].y));
+                    
+                    lastMousePos = touchPos;
+                    updateCanvas();
+                }
                 e.preventDefault();
             }
         });
 
         canvas.addEventListener('touchend', function(e) {
+            const touchEndTime = Date.now();
+            const touchDuration = touchEndTime - touchStartTime;
+            
+            // Если это был короткий тап без перетаскивания - активируем блок
+            if (!isTouchDragging && touchDuration < 300 && dragTarget) {
+                // Активируем блок только при коротком тапе
+                setActiveBlock(dragTarget);
+                
+                // Показываем уведомление на мобильных
+                showMobileNotification(`Выбран блок: ${getBlockName(dragTarget)}`);
+            }
+            
             isDragging = false;
+            isTouchDragging = false;
+            dragTarget = null;
             e.preventDefault();
         });
 
         canvas.addEventListener('touchcancel', function(e) {
             isDragging = false;
+            isTouchDragging = false;
             dragTarget = null;
             updateCanvas();
             e.preventDefault();
         });
+        
+        // Функция для получения читаемого названия блока
+        function getBlockName(blockId) {
+            const names = {
+                'invitationTo': 'Шақырту иелері',
+                'mainText': 'Шақырту мәтіні', 
+                'dateTime': 'Уақыты',
+                'location': 'Мекен-жайымыз',
+                'hosts': 'Той иелері'
+            };
+            return names[blockId] || blockId;
+        }
+        
+        // Функция показа уведомлений на мобильных
+        function showMobileNotification(message) {
+            // Создаем уведомление только на мобильных
+            const isMobile = window.innerWidth <= 1200;
+            if (!isMobile) return;
+            
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(78, 205, 196, 0.95);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 25px;
+                font-size: 14px;
+                font-weight: 600;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                animation: slideDown 0.3s ease, fadeOut 0.3s ease 2s forwards;
+            `;
+            
+            // Добавляем анимацию
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideDown {
+                    from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+                }
+                @keyframes fadeOut {
+                    to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            
+            // Удаляем уведомление через 2.5 секунды
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+                if (style.parentNode) {
+                    style.parentNode.removeChild(style);
+                }
+            }, 2500);
+        }
         
         function setActiveBlock(blockId) {
             // Убираем активность со всех блоков
@@ -1159,11 +1255,14 @@
                     blockInput.closest('.control-group').classList.add('active-block');
                     document.getElementById(blockId + '-controls').classList.add('active');
                     
-                    // Прокручиваем к активному блоку
-                    blockInput.closest('.control-group').scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                    });
+                    // Прокручиваем к активному блоку ТОЛЬКО на десктопе
+                    const isMobile = window.innerWidth <= 1200;
+                    if (!isMobile) {
+                        blockInput.closest('.control-group').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }
                 }
                 updateCanvas();
             }
