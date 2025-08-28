@@ -364,18 +364,28 @@
             
             <div class="controls-panel">
                 <div class="control-group">
-                    <label>📝 Основной текст</label>
-                    <textarea id="mainText" placeholder="Введите текст приглашения...">Приглашаем Вас на торжество!</textarea>
+                    <label>👥 Шақырту иелері</label>
+                    <input type="text" id="invitationTo" placeholder="Құрметті достар мен әріптестер..." value="Құрметті достар мен әріптестер!">
                 </div>
                 
                 <div class="control-group">
-                    <label>📅 Дата и время</label>
-                    <input type="text" id="dateText" placeholder="25 декабря 2024, 18:00" value="25 декабря 2024, 18:00">
+                    <label>📝 Шақырту мәтіні</label>
+                    <textarea id="mainText" placeholder="Негізгі шақыру мәтінін енгізіңіз...">Сіздерді, мерейлі 50 жас мерейтойымыз арнайы жайылған дастарханымызның қадірлі қонағы болуға шақырамыз!</textarea>
                 </div>
                 
                 <div class="control-group">
-                    <label>📍 Место проведения</label>
-                    <input type="text" id="locationText" placeholder="Название места" value="Ресторан 'Звездный'">
+                    <label>⏰ Уақыты</label>
+                    <input type="text" id="dateTime" placeholder="12 қаңтар / сағат 19:30" value="12 қаңтар / сағат 19:30">
+                </div>
+                
+                <div class="control-group">
+                    <label>📍 Мекен-жайымыз</label>
+                    <input type="text" id="location" placeholder="Жетібай ауылы, 'Достық' мейрамханасы" value="Жетібай ауылы, 'Достық' мейрамханасы">
+                </div>
+                
+                <div class="control-group">
+                    <label>🎭 Той иелері</label>
+                    <input type="text" id="hosts" placeholder="Ержан - Гүлшат" value="Той иелері: Ержан - Гүлшат">
                 </div>
                 
                 <div class="control-group">
@@ -463,9 +473,11 @@
         
         // Позиции текстовых блоков
         let textPositions = {
-            mainText: { x: 200, y: 200 },
-            dateText: { x: 200, y: 350 },
-            locationText: { x: 200, y: 450 }
+            invitationTo: { x: 200, y: 120 },    // Шақырту иелері
+            mainText: { x: 200, y: 220 },        // Шақырту мәтіні
+            dateTime: { x: 200, y: 320 },        // Уақыты
+            location: { x: 200, y: 400 },        // Мекен-жайымыз
+            hosts: { x: 200, y: 500 }            // Той иелері
         };
         
         let isDragging = false;
@@ -605,9 +617,11 @@
             drawBackground();
             
             // Текст
+            const invitationTo = document.getElementById('invitationTo').value;
             const mainText = document.getElementById('mainText').value;
-            const dateText = document.getElementById('dateText').value;
-            const locationText = document.getElementById('locationText').value;
+            const dateTime = document.getElementById('dateTime').value;
+            const location = document.getElementById('location').value;
+            const hosts = document.getElementById('hosts').value;
             const textColor = document.getElementById('textColor').value;
             const fontSize = parseInt(document.getElementById('fontSize').value);
             const fontFamily = document.getElementById('fontFamily').value;
@@ -622,20 +636,30 @@
             if (isItalic) fontStyle += 'italic ';
             if (isBold) fontStyle += 'bold ';
             
-            // Основной текст
+            // 1. Шақырту иелері (меньший размер, элегантный)
+            ctx.font = `${fontStyle}${fontSize * 0.65}px ${fontFamily}`;
+            const invitationToLineHeight = ((fontSize * 0.65) + 6) * lineSpacing;
+            wrapText(invitationTo, textPositions.invitationTo.x, textPositions.invitationTo.y, canvas.width - 60, invitationToLineHeight, 'invitationTo');
+            
+            // 2. Шақырту мәтіні (основной текст)
             ctx.font = `${fontStyle}${fontSize}px ${fontFamily}`;
             const mainLineHeight = (fontSize + 10) * lineSpacing;
             wrapText(mainText, textPositions.mainText.x, textPositions.mainText.y, canvas.width - 60, mainLineHeight, 'mainText');
             
-            // Дата
-            ctx.font = `${fontStyle}${fontSize * 0.7}px ${fontFamily}`;
-            const dateLineHeight = ((fontSize * 0.7) + 8) * lineSpacing;
-            wrapText(dateText, textPositions.dateText.x, textPositions.dateText.y, canvas.width - 60, dateLineHeight, 'dateText');
+            // 3. Уақыты (дата и время)
+            ctx.font = `${fontStyle}${fontSize * 0.8}px ${fontFamily}`;
+            const dateTimeLineHeight = ((fontSize * 0.8) + 8) * lineSpacing;
+            wrapText(dateTime, textPositions.dateTime.x, textPositions.dateTime.y, canvas.width - 60, dateTimeLineHeight, 'dateTime');
             
-            // Место
-            ctx.font = `${fontStyle}${fontSize * 0.6}px ${fontFamily}`;
-            const locationLineHeight = ((fontSize * 0.6) + 6) * lineSpacing;
-            wrapText(locationText, textPositions.locationText.x, textPositions.locationText.y, canvas.width - 60, locationLineHeight, 'locationText');
+            // 4. Мекен-жайымыз (место)
+            ctx.font = `${fontStyle}${fontSize * 0.7}px ${fontFamily}`;
+            const locationLineHeight = ((fontSize * 0.7) + 6) * lineSpacing;
+            wrapText(location, textPositions.location.x, textPositions.location.y, canvas.width - 60, locationLineHeight, 'location');
+            
+            // 5. Той иелері (хозяева торжества)
+            ctx.font = `${fontStyle}${fontSize * 0.75}px ${fontFamily}`;
+            const hostsLineHeight = ((fontSize * 0.75) + 7) * lineSpacing;
+            wrapText(hosts, textPositions.hosts.x, textPositions.hosts.y, canvas.width - 60, hostsLineHeight, 'hosts');
         }
         
         // Функции для работы с перетаскиванием
@@ -780,9 +804,11 @@
         }
         
         // Обработчики контролов
+        document.getElementById('invitationTo').addEventListener('input', updateCanvas);
         document.getElementById('mainText').addEventListener('input', updateCanvas);
-        document.getElementById('dateText').addEventListener('input', updateCanvas);
-        document.getElementById('locationText').addEventListener('input', updateCanvas);
+        document.getElementById('dateTime').addEventListener('input', updateCanvas);
+        document.getElementById('location').addEventListener('input', updateCanvas);
+        document.getElementById('hosts').addEventListener('input', updateCanvas);
         document.getElementById('textColor').addEventListener('change', updateCanvas);
         document.getElementById('fontFamily').addEventListener('change', updateCanvas);
         
@@ -832,16 +858,20 @@
         
         function resetTextPositions() {
             textPositions = {
-                mainText: { x: canvas.width / 2, y: canvas.height / 2 - 80 },
-                dateText: { x: canvas.width / 2, y: canvas.height / 2 + 20 },
-                locationText: { x: canvas.width / 2, y: canvas.height / 2 + 60 }
+                invitationTo: { x: canvas.width / 2, y: canvas.height * 0.15 },  // 15% от верха
+                mainText: { x: canvas.width / 2, y: canvas.height * 0.4 },       // 40% от верха
+                dateTime: { x: canvas.width / 2, y: canvas.height * 0.65 },      // 65% от верха
+                location: { x: canvas.width / 2, y: canvas.height * 0.8 },       // 80% от верха  
+                hosts: { x: canvas.width / 2, y: canvas.height * 0.92 }          // 92% от верха
             };
         }
         
         function centerTextPositions() {
+            textPositions.invitationTo.x = canvas.width / 2;
             textPositions.mainText.x = canvas.width / 2;
-            textPositions.dateText.x = canvas.width / 2;
-            textPositions.locationText.x = canvas.width / 2;
+            textPositions.dateTime.x = canvas.width / 2;
+            textPositions.location.x = canvas.width / 2;
+            textPositions.hosts.x = canvas.width / 2;
         }
         
         function downloadImage(format) {
@@ -899,9 +929,11 @@
                 template: currentTemplate,
                 customImage: customImage,
                 textPositions: textPositions,
+                invitationTo: document.getElementById('invitationTo').value,
                 mainText: document.getElementById('mainText').value,
-                dateText: document.getElementById('dateText').value,
-                locationText: document.getElementById('locationText').value,
+                dateTime: document.getElementById('dateTime').value,
+                location: document.getElementById('location').value,
+                hosts: document.getElementById('hosts').value,
                 textColor: document.getElementById('textColor').value,
                 fontSize: document.getElementById('fontSize').value,
                 textWidth: document.getElementById('textWidth').value,
